@@ -6,29 +6,29 @@ from exp.exp_informer import Exp_Informer
 print(torch.cuda.device_count())
 print(torch.cuda.is_available())
 
-
+num_fea=23
 parser = argparse.ArgumentParser(description='[Informer] Long Sequences Forecasting')
 
 parser.add_argument('--model', type=str, default='informer', help='model of experiment, options: [informer, informerstack, informerlight(TBD)]')
 
 parser.add_argument('--data', type=str, default='zyq', help='data')
 parser.add_argument('--root_path', type=str, default='./data/ETT/', help='root path of the data file')
-parser.add_argument('--data_path', type=str, default='2_cleaned.csv', help='data file')
+parser.add_argument('--data_path', type=str, default='informer_test_10000.csv', help='data file')
 parser.add_argument('--features', type=str, default='MS', help='forecasting task, options:[M, S, MS]; M:multivariate predict multivariate, S:univariate predict univariate, MS:multivariate predict univariate')
-parser.add_argument('--target', type=str, default='OT', help='target feature in S or MS task')
-parser.add_argument('--freq', type=str, default='s', help='freq for time features encoding, options:[s:secondly, t:minutely, h:hourly, d:daily, b:business days, w:weekly, m:monthly], you can also use more detailed freq like 15min or 3h')
+parser.add_argument('--target', type=str, default='diff', help='target feature in S or MS task')
+parser.add_argument('--freq', type=str, default='t', help='freq for time features encoding, options:[s:secondly, t:minutely, h:hourly, d:daily, b:business days, w:weekly, m:monthly], you can also use more detailed freq like 15min or 3h')
 parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='location of model checkpoints')
 
-parser.add_argument('--seq_len', type=int, default=96, help='input sequence length of Informer encoder')
-parser.add_argument('--label_len', type=int, default=48, help='start token length of Informer decoder')
-parser.add_argument('--pred_len', type=int, default=24, help='prediction sequence length')
+parser.add_argument('--seq_len', type=int, default=1440, help='input sequence length of Informer encoder')
+parser.add_argument('--label_len', type=int, default=720, help='start token length of Informer decoder')
+parser.add_argument('--pred_len', type=int, default=1440, help='prediction sequence length')
 # Informer decoder input: concat[start token series(label_len), zero padding series(pred_len)]
 
 
 
-parser.add_argument('--enc_in', type=int, default=7, help='encoder input size')
-parser.add_argument('--dec_in', type=int, default=7, help='decoder input size')
-parser.add_argument('--c_out', type=int, default=7, help='output size')
+parser.add_argument('--enc_in', type=int, default=num_fea, help='encoder input size')
+parser.add_argument('--dec_in', type=int, default=num_fea, help='decoder input size')
+parser.add_argument('--c_out', type=int, default=num_fea, help='output size')
 parser.add_argument('--d_model', type=int, default=512, help='dimension of model')
 parser.add_argument('--n_heads', type=int, default=8, help='num of heads')
 parser.add_argument('--e_layers', type=int, default=2, help='num of encoder layers')
@@ -82,7 +82,7 @@ data_parser = {
     'WTH':{'data':'WTH.csv','T':'WetBulbCelsius','M':[12,12,12],'S':[1,1,1],'MS':[12,12,1]},
     'ECL':{'data':'ECL.csv','T':'MT_320','M':[321,321,321],'S':[1,1,1],'MS':[321,321,1]},
     'Solar':{'data':'solar_AL.csv','T':'POWER_136','M':[137,137,137],'S':[1,1,1],'MS':[137,137,1]},
-    'zyq': {'data': '2_cleaned.csv', 'T': 'inputpower', 'M': [2, 2, 2], 'S': [1, 1, 1], 'MS': [2, 2, 1]},
+    'zyq': {'data': 'informer_test_10000.csv', 'T': 'diff', 'M': [num_fea, num_fea, num_fea], 'S': [1, 1, 1], 'MS': [num_fea, num_fea, 1]},
 
 }
 if args.data in data_parser.keys():
